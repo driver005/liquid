@@ -54,7 +54,7 @@ impl Picker {
                             .cursor(floem::style::CursorStyle::Pointer)
                             .background(if is_selected { scale.d500.with_alpha(0.15) } else { floem::peniko::Color::TRANSPARENT })
                             .color(if is_selected { scale.d400 } else { theme.foreground })
-                            .hover(|s| s.background(theme.content2))
+                            .hover(move |s| if is_selected { s } else { s.background(theme.content2) })
                     })
                     .on_event_stop(floem::event::listener::Click, move |_, _| {
                         search_text.set(item_clone.to_string());

@@ -964,7 +964,7 @@ impl Theme {
         Style::new()
             .flex_row()
             .gap(2.0)
-            .padding_left(3.0).padding_vert(3.0).padding_right(0.0)
+            .padding_horiz(3.0).padding_vert(3.0)
             .border_radius(self.radius_md)
             .background(self.content2)
     }

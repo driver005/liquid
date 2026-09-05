@@ -37,7 +37,7 @@ impl Theme {
                      .cursor(floem::style::CursorStyle::Pointer)
                      .background(if is_selected { scale.d500.with_alpha(0.15) } else { floem::peniko::Color::TRANSPARENT })
                      .color(if is_selected { scale.d400 } else { text_color })
-                     .hover(move |s| s.background(content2))
+                     .hover(move |s| if is_selected { s } else { s.background(content2) })
                 })
                 .into_any()
         })
