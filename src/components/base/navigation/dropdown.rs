@@ -21,15 +21,23 @@ impl Theme {
         let text_color = self.foreground;
         let radius = self.radius_md;
 
+        let content2 = self.content2;
+        
         Dropdown::new_rw(active_item, iterator)
         .list_item_view(move |item| {
+            let item_clone = item.clone();
+            let active_item_sig = active_item;
+            
             floem::views::Label::new(item.clone())
                 .style(move |s| {
+                    let is_selected = active_item_sig.get() == item_clone;
                     s.width_full()
                      .padding(8.0)
-                     .border_radius(4.0)
+                     .border_radius(radius)
                      .cursor(floem::style::CursorStyle::Pointer)
-                     .hover(|s| s.background(bg_hover))
+                     .background(if is_selected { scale.d500.with_alpha(0.15) } else { floem::peniko::Color::TRANSPARENT })
+                     .color(if is_selected { scale.d400 } else { text_color })
+                     .hover(move |s| s.background(content2))
                 })
                 .into_any()
         })
