@@ -15,7 +15,7 @@ impl Ripple {
         Self::default()
     }
 
-    pub fn ripple_target(child: impl View + 'static, color: Color, _radius: f32) -> impl View {
+    pub fn ripple_target(child: impl View + 'static, color: Color, radius: f32) -> impl View {
         let ripples: RwSignal<Vec<(u64, RwSignal<bool>)>> =
             floem::reactive::RwSignal::new(Vec::new());
         let next_id: RwSignal<u64> = floem::reactive::RwSignal::new(0);
@@ -65,6 +65,7 @@ impl Ripple {
             .style(move |s| {
                 s.overflow_x(floem::taffy::style::Overflow::Hidden)
                     .overflow_y(floem::taffy::style::Overflow::Hidden)
+                    .border_radius(radius)
             })
             .on_event_stop(floem::event::listener::PointerDown, move |_cx, _evt| {
                 let id = next_id.get_untracked();
