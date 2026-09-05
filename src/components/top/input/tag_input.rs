@@ -44,7 +44,8 @@ impl TagInput {
                     s.flex_row()
                         .items_center()
                         .gap(4.0)
-                        .padding_xy(6.0, 3.0)
+                        .padding_horiz(8.0)
+                        .padding_vert(4.0)
                         .border_radius(theme.radius_sm)
                         .background(theme.content3)
                 })
@@ -66,7 +67,8 @@ impl TagInput {
                         .background(Color::TRANSPARENT)
                         .color(theme.foreground)
                         .font_size(14.0)
-                        .padding_xy(4.0, 6.0)
+                        .padding_horiz(8.0)
+                        .padding_vert(6.0)
                 })
                 .on_event_stop(floem::event::listener::KeyDown, move |_, event| {
                     if event.key == Key::Named(NamedKey::Enter) {
@@ -80,7 +82,8 @@ impl TagInput {
                 .gap(4.0)
                 .flex_wrap(floem::taffy::style::FlexWrap::Wrap)
                 .apply(theme.input_container_style())
-                .padding_xy(8.0, 6.0)
+                .padding_horiz(8.0)
+                .padding_vert(6.0)
         })
     }
 }

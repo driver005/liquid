@@ -44,10 +44,10 @@ impl Picker {
             move |item| {
                 let item_clone = item.clone();
                 let item_str = item.to_string();
-                let is_selected = selected.get() == Some(item.clone());
-
+                let item_clone_for_style = item.clone();
                 floem::views::Label::new(item_str)
                     .style(move |s| {
+                        let is_selected = selected.get() == Some(item_clone_for_style.clone());
                         s.width_full()
                             .padding(8.0)
                             .border_radius(theme.radius_md)
