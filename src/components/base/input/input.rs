@@ -21,7 +21,7 @@ impl Theme {
                 .cursor(CursorStyle::Text)
                 .cursor_color(fg_color.with_alpha(0.5))
                 .padding_horiz(15.0)
-                .padding_vert(8.0) // Fall back to geometric bounds
+                .height(36.0) // Give the input a fixed height so Floem natively centers the text inside
                 .items_center().justify_center()
                 .disabled(|s| {
                     s.background(scale_d500.with_alpha(0.3))
