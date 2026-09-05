@@ -87,7 +87,7 @@ impl Chip {
         .style({
             let bg = bg.clone();
             let border_color = border_color.clone();
-            move |s| s.apply(theme.chip_container_style(bg, border_color, radius)).justify_around()
+            move |s| s.apply(theme.chip_container_style(bg, border_color, radius)).justify_between()
         })
     }
 
