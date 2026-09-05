@@ -22,7 +22,7 @@ impl Theme {
                 .cursor_color(fg_color.with_alpha(0.5))
                 .padding_horiz(15.0)
                 .padding_vert(8.0) // Fall back to geometric bounds
-                .padding_bottom(10.0) // Overwrite bottom padding to optically nudge text up!
+                .items_center().justify_center()
                 .disabled(|s| {
                     s.background(scale_d500.with_alpha(0.3))
                      .color(fg_color.with_alpha(0.5))

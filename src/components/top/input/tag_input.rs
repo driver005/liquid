@@ -31,14 +31,14 @@ impl TagInput {
                         .style(move |s| {
                             s.font_size(13.0)
                              .color(theme.foreground)
-                             .padding_bottom(2.0) // Optical adjustment to push lowercase text up
+                             .items_center().justify_center()
                         }),
                     floem::views::Label::new("✕")
                         .style(move |s| {
                             s.font_size(13.0)
                                 .color(theme.foreground_secondary)
                                 .cursor(floem::style::CursorStyle::Pointer)
-                                .padding_bottom(2.0) // Match optical adjustment
+                                .items_center().justify_center()
                                 .hover(move |s| s.color(theme.danger.d500))
                         })
                         .on_event_stop(floem::event::listener::Click, move |_, _| {
@@ -72,7 +72,7 @@ impl TagInput {
                         .color(theme.foreground)
                         .font_size(14.0)
                         .padding_horiz(8.0)
-                        .padding_bottom(2.0) // Optical adjustment for input
+                        .items_center().justify_center()
                 })
                 .on_event_stop(floem::event::listener::KeyDown, move |_, event| {
                     if event.key == Key::Named(NamedKey::Enter) {
