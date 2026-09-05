@@ -26,7 +26,9 @@ impl ToggleGroup {
                     .style(move |s| {
                         let is_sel = selected_sig.get() == Some(i);
                         s.font_size(13.0)
-                            .padding_xy(12.0, 6.0)
+                            .padding_horiz(12.0)
+                            .padding_vert(6.0)
+                            .border_radius(theme.radius_sm) // <-- Fixed: Added border radius to inner toggle
                             .color(if is_sel {
                                 Color::WHITE
                             } else {
@@ -56,7 +58,7 @@ impl ToggleGroup {
                             }
                         });
                     });
-                crate::components::base::button::ripple::Ripple::ripple_target(btn, ripple_color, theme.radius_md)
+                crate::components::base::button::ripple::Ripple::ripple_target(btn, ripple_color, theme.radius_sm)
             })
             .collect();
 
@@ -87,7 +89,9 @@ impl ToggleGroup {
                     .style(move |s| {
                         let is_sel = selected_sig.get().contains(&i);
                         s.font_size(13.0)
-                            .padding_xy(12.0, 6.0)
+                            .padding_horiz(12.0)
+                            .padding_vert(6.0)
+                            .border_radius(theme.radius_sm)
                             .color(if is_sel {
                                 theme.primary.d700
                             } else {
@@ -98,7 +102,6 @@ impl ToggleGroup {
                             } else {
                                 Color::TRANSPARENT
                             })
-                            .border_radius(theme.radius_sm)
                             .cursor(floem::style::CursorStyle::Pointer)
                             .transition_colors()
                             .hover(|s| {
@@ -118,7 +121,7 @@ impl ToggleGroup {
                             }
                         });
                     });
-                crate::components::base::button::ripple::Ripple::ripple_target(btn, ripple_color, theme.radius_md)
+                crate::components::base::button::ripple::Ripple::ripple_target(btn, ripple_color, theme.radius_sm)
             })
             .collect();
 
