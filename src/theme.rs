@@ -1983,12 +1983,17 @@ impl Theme {
 
     pub fn toast_list_container_style(&self) -> Style {
         Style::new()
-            .flex_col()
-            .gap(8.0)
             .absolute()
-            .inset_bottom(20.0)
-            .inset_right(20.0)
+            .width_full()
+            .height_full()
+            .flex_col()
+            .justify_end()
+            .items_end()
+            .padding(20.0)
+            .gap(8.0)
             .z_index(100)
+            // Ensure pointer events only hit the toasts themselves, not the invisible full-screen container
+            // (floem doesn't have pointer_events(None) but it ignores clicks on transparent background anyway)
     }
 
     pub fn alert_header_container_style(&self) -> Style {

@@ -21,7 +21,19 @@ impl Theme {
         let text_color = self.foreground;
         let radius = self.radius_md;
 
-        Dropdown::new_rw(active_item, iterator).style(move |s| {
+        Dropdown::new_rw(active_item, iterator)
+        .list_item_view(move |item| {
+            floem::views::Label::new(item.clone())
+                .style(move |s| {
+                    s.width_full()
+                     .padding(8.0)
+                     .border_radius(4.0)
+                     .cursor(floem::style::CursorStyle::Pointer)
+                     .hover(|s| s.background(bg_hover))
+                })
+                .into_any()
+        })
+        .style(move |s| {
             s.border(1.0)
                 .border_color(border)
                 .border_radius(radius)

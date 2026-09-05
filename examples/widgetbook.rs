@@ -732,13 +732,16 @@ fn render_tabs(theme: Theme) -> impl View {
     let active = RwSignal::new(0usize);
     floem::views::Stack::vertical((
         wb_title("Tabs"),
-        theme.tab_core(
-            move || active.get(),
+        hero_floem::components::base::navigation::tabs::Tabs::new().tabs(
+            vec!["General".to_string(), "Security".to_string()],
+            active,
             move |idx| match idx {
                 0 => floem::views::Label::new("General settings panel").into_any(),
                 1 => floem::views::Label::new("Security settings panel").into_any(),
                 _ => floem::views::Label::new("").into_any(),
             },
+            theme.clone(),
+            ColorRole::Primary
         ),
     )).style(|s| s.flex_col().gap(8.0))
 }
@@ -803,7 +806,8 @@ fn render_tooltip(theme: Theme) -> impl View {
     floem::views::Stack::vertical((
         wb_title("Tooltip"),
         theme.tooltip_core(
-            theme.button_ui_kit(move || "Hover me", ButtonVariant::Regular, ColorRole::Primary),
+            floem::views::Label::new("Hover me (Wait 0.6s)")
+                .style(move |s| s.padding(12.0).border(1.0).border_radius(4.0).border_color(theme.border)),
             move || floem::views::Label::new("Tooltip content here"),
         ),
     )).style(|s| s.flex_col().gap(8.0))
