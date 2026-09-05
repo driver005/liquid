@@ -28,10 +28,10 @@ impl TagInput {
                 let tag_clone = tag.clone();
                 floem::views::Stack::horizontal((
                     floem::views::Label::new(tag.clone())
-                        .style(move |s| s.font_size(13.0).color(theme.foreground)),
+                        .style(move |s| s.font_size(13.0).color(theme.foreground).items_center().justify_center()),
                     floem::views::Label::new("✕")
                         .style(move |s| {
-                            s.font_size(11.0)
+                            s.font_size(13.0).items_center().justify_center()
                                 .color(theme.foreground_secondary)
                                 .cursor(floem::style::CursorStyle::Pointer)
                                 .hover(move |s| s.color(theme.danger.d500))
