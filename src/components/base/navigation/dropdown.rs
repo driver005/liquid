@@ -21,25 +21,20 @@ impl Theme {
         let text_color = self.foreground;
         let radius = self.radius_md;
 
-        let content2 = self.content2;
+        let theme = self.clone();
         
         Dropdown::new_rw(active_item, iterator)
         .list_item_view(move |item| {
             let item_clone = item.clone();
             let active_item_sig = active_item;
             
-            floem::views::Label::new(item.clone())
-                .style(move |s| {
-                    let is_selected = active_item_sig.get() == item_clone;
-                    s.width_full()
-                     .padding(8.0)
-                     .border_radius(radius)
-                     .cursor(floem::style::CursorStyle::Pointer)
-                     .background(if is_selected { scale.d500.with_alpha(0.15) } else { floem::peniko::Color::TRANSPARENT })
-                     .color(if is_selected { scale.d400 } else { text_color })
-                     .hover(move |s| if is_selected { s } else { s.background(content2) })
-                })
-                .into_any()
+            let is_selected = active_item_sig.get() == item_clone;
+            crate::components::base::input::select_item::SelectItem::new().item(
+                item.clone().to_string(),
+                is_selected,
+                theme.clone(),
+                color
+            ).into_any()
         })
         .style(move |s| {
             s.border(1.0)

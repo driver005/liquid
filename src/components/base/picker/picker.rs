@@ -45,17 +45,13 @@ impl Picker {
                 let item_clone = item.clone();
                 let item_str = item.to_string();
                 let item_clone_for_style = item.clone();
-                floem::views::Label::new(item_str)
-                    .style(move |s| {
-                        let is_selected = selected.get() == Some(item_clone_for_style.clone());
-                        s.width_full()
-                            .padding(8.0)
-                            .border_radius(theme.radius_md)
-                            .cursor(floem::style::CursorStyle::Pointer)
-                            .background(if is_selected { scale.d500.with_alpha(0.15) } else { floem::peniko::Color::TRANSPARENT })
-                            .color(if is_selected { scale.d400 } else { theme.foreground })
-                            .hover(move |s| if is_selected { s } else { s.background(theme.content2) })
-                    })
+                let is_selected = selected.get() == Some(item_clone_for_style.clone());
+                crate::components::base::input::select_item::SelectItem::new().item(
+                    item_str,
+                    is_selected,
+                    theme.clone(),
+                    color
+                )
                     .on_event_stop(floem::event::listener::Click, move |_, _| {
                         search_text.set(item_clone.to_string());
                         selected.set(Some(item_clone.clone()));
