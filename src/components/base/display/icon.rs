@@ -14,7 +14,7 @@ impl SvgIcon {
             .style(move |s| {
                 s.width(size)
                     .height(size)
-                    .color(theme.foreground)
+                    .color(theme.foreground).items_center().justify_center()
             })
     }
 }

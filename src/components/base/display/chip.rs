@@ -66,11 +66,12 @@ impl Chip {
 
         let close_fg = fg;
 
-        let close_btn = floem::views::Label::new("✕")
+        let close_svg = r#"<svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>"#;
+        let close_btn = crate::components::base::display::icon::SvgIcon::new().icon(close_svg, 14.0, theme.clone())
             .style({
                 let close_fg = close_fg.clone();
                 move |s| {
-                    s.apply(theme.chip_close_button_style(close_fg))
+                    s.apply(theme.chip_close_button_style(close_fg)).color(close_fg)
                         .hover(move |s| s.apply(theme.chip_close_button_hover_style()))
                 }
             })
@@ -86,7 +87,7 @@ impl Chip {
         .style({
             let bg = bg.clone();
             let border_color = border_color.clone();
-            move |s| s.apply(theme.chip_container_style(bg, border_color, radius))
+            move |s| s.apply(theme.chip_container_style(bg, border_color, radius)).justify_around()
         })
     }
 

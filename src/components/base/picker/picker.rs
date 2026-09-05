@@ -57,6 +57,7 @@ impl Picker {
                             .hover(|s| s.background(theme.content2))
                     })
                     .on_event_stop(floem::event::listener::Click, move |_, _| {
+                        search_text.set(item_clone.to_string());
                         selected.set(Some(item_clone.clone()));
                     })
                     .into_any()
