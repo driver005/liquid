@@ -20,8 +20,9 @@ impl Theme {
                 .font_size(14.0)
                 .cursor(CursorStyle::Text)
                 .cursor_color(fg_color.with_alpha(0.5))
-                .height(36.0) // Floem natively centers text perfectly if height is explicitly set!
-                .padding_horiz(15.0) // Only horizontal padding, let Floem handle vertical
+                .padding_horiz(15.0)
+                .padding_vert(8.0) // Fall back to geometric bounds
+                .padding_bottom(10.0) // Overwrite bottom padding to optically nudge text up!
                 .disabled(|s| {
                     s.background(scale_d500.with_alpha(0.3))
                      .color(fg_color.with_alpha(0.5))

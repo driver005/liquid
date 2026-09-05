@@ -28,13 +28,17 @@ impl TagInput {
                 let tag_clone = tag.clone();
                 floem::views::Stack::horizontal((
                     floem::views::Label::new(tag.clone())
-                        .style(move |s| s.font_size(13.0).color(theme.foreground).height(24.0)),
+                        .style(move |s| {
+                            s.font_size(13.0)
+                             .color(theme.foreground)
+                             .padding_bottom(2.0) // Optical adjustment to push lowercase text up
+                        }),
                     floem::views::Label::new("✕")
                         .style(move |s| {
                             s.font_size(13.0)
-                                .height(24.0)
                                 .color(theme.foreground_secondary)
                                 .cursor(floem::style::CursorStyle::Pointer)
+                                .padding_bottom(2.0) // Match optical adjustment
                                 .hover(move |s| s.color(theme.danger.d500))
                         })
                         .on_event_stop(floem::event::listener::Click, move |_, _| {
@@ -43,9 +47,10 @@ impl TagInput {
                 ))
                 .style(move |s| {
                     s.flex_row()
+                        .items_center() // Geometrically centers the labels
                         .gap(6.0)
                         .padding_horiz(8.0)
-                        .height(24.0)
+                        .height(24.0) // Container height
                         .border_radius(theme.radius_sm)
                         .background(theme.content3)
                 })
@@ -66,8 +71,8 @@ impl TagInput {
                         .background(Color::TRANSPARENT)
                         .color(theme.foreground)
                         .font_size(14.0)
-                        .height(36.0) // Give text input a height to natively center
                         .padding_horiz(8.0)
+                        .padding_bottom(2.0) // Optical adjustment for input
                 })
                 .on_event_stop(floem::event::listener::KeyDown, move |_, event| {
                     if event.key == Key::Named(NamedKey::Enter) {
@@ -77,11 +82,12 @@ impl TagInput {
         ))
         .style(move |s| {
             s.flex_row()
+                .items_center()
                 .gap(4.0)
                 .flex_wrap(floem::taffy::style::FlexWrap::Wrap)
                 .apply(theme.input_container_style())
                 .padding_horiz(8.0)
-                .min_height(36.0) // Let inner elements dictate native baseline centering
+                .min_height(36.0)
         })
     }
 }
