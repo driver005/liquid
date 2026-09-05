@@ -96,8 +96,6 @@ jobs:
           mkdir -p screenshots
           bash scripts/screenshot_components.sh screenshots
         env:
-  WINIT_UNIX_BACKEND: x11
-  LIBGL_ALWAYS_SOFTWARE: 1
           DISPLAY: ":99"
 
       - name: Kill widgetbook
