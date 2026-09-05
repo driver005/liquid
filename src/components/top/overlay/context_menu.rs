@@ -48,40 +48,19 @@ impl ContextMenu {
                 }
 
                 let label = item.label.clone();
-                let icon = item.icon.map(|s| s.to_string());
                 let on_click = item.on_click;
 
-                floem::views::Stack::horizontal((
-                    floem::views::dyn_container(
-                        move || icon.clone(),
-                        move |icon_str| {
-                            if let Some(i) = icon_str {
-                                floem::views::Label::new(i)
-                                    .style(move |s| {
-                                        s.font_size(14.0)
-                                            .color(theme.foreground_secondary)
-                                            .width(20.0)
-                                    })
-                                    .into_any()
-                            } else {
-                                floem::views::Empty::new().into_any()
-                            }
-                        },
-                    ),
-                    floem::views::Label::new(label)
-                        .style(move |s| s.font_size(13.0).color(theme.foreground).flex_grow(1.0)),
-                ))
-                .style(move |s| {
-                    s.flex_row()
-                        .items_center()
-                        .gap(8.0)
-                        .width_full()
-                        .padding_xy(12.0, 8.0)
-                        .border_radius(theme.radius_sm)
-                        .cursor(floem::style::CursorStyle::Pointer)
-                        .transition_colors()
-                        .hover(move |s| s.background(theme.content2))
-                })
+                let mut builder = crate::components::base::input::select_item::SelectItem::new();
+                if let Some(ic) = item.icon {
+                    builder = builder.icon(ic);
+                }
+
+                builder.item(
+                    label,
+                    || false,
+                    theme.clone(),
+                    crate::theme::ColorRole::Primary
+                )
                 .on_event_stop(floem::event::listener::Click, move |_, _| {
                     if let Some(on_click) = &on_click {
                         on_click();

@@ -8,6 +8,7 @@ pub struct SelectItem {
     pub trailing: Option<String>,
     pub show_check: bool,
     pub disabled: bool,
+    pub danger: bool,
 }
 
 impl SelectItem {
@@ -39,6 +40,11 @@ impl SelectItem {
         self.disabled = disabled;
         self
     }
+    
+    pub fn danger(mut self, danger: bool) -> Self {
+        self.danger = danger;
+        self
+    }
 
     pub fn item(
         self,
@@ -48,7 +54,7 @@ impl SelectItem {
         color: ColorRole,
     ) -> impl View {
         let scale = *theme.scale_for(color);
-        let text_color = theme.foreground;
+        let text_color = if self.danger { theme.danger.d500 } else { theme.foreground };
         let bg_hover = theme.content2;
         let disabled = self.disabled;
         let has_desc = self.description.is_some();

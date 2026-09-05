@@ -64,36 +64,20 @@ impl Menu {
                 }
 
                 let label = item.label.clone();
-                let icon = item.icon.map(|s| s.to_string());
                 let on_click = item.on_click;
                 let danger = item.danger;
-                let text_color = if danger {
-                    theme.danger.d500
-                } else {
-                    theme.foreground
-                };
+                
+                let mut builder = crate::components::base::input::select_item::SelectItem::new().danger(danger);
+                if let Some(ic) = item.icon {
+                    builder = builder.icon(ic);
+                }
 
-                let row = floem::views::Stack::horizontal((
-                    icon.map(|ic| {
-                        let color = text_color;
-                        floem::views::Label::new(ic).style({
-                            let color = color.clone();
-                            move |s| s.apply(theme.menu_icon_style(color))
-                        })
-                    })
-                    .map(|v| v.into_any())
-                    .unwrap_or_else(|| floem::views::Empty::new().into_any()),
-                    floem::views::Label::new(label).style({
-                        let text_color = text_color.clone();
-                        move |s| s.apply(theme.menu_label_style(text_color))
-                    }),
-                ))
-                .style({
-                    move |s| {
-                        s.apply(theme.menu_row_style())
-                            .hover(move |s| s.apply(theme.menu_row_hover_style(danger)))
-                    }
-                })
+                let row = builder.item(
+                    label,
+                    || false,
+                    theme.clone(),
+                    crate::theme::ColorRole::Primary
+                )
                 .on_event_stop(floem::event::listener::Click, move |_, _| {
                     if let Some(on_click) = &on_click {
                         on_click();
@@ -101,6 +85,7 @@ impl Menu {
                     open_sig.set(false);
                 });
 
+                let text_color = if danger { theme.danger.d500 } else { theme.foreground };
                 crate::components::base::button::ripple::Ripple::ripple_target(row, text_color, theme.radius_md).into_any()
             })
             .collect();
