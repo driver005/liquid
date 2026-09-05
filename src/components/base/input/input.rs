@@ -24,10 +24,10 @@ impl TextInput {
                 .border(1.0)
                 .border_color(fg_color.with_alpha(0.5))
                 .border_radius(5.0)
-                .font_size(14.0).line_height(1.0)
+                .font_size(14.0)
                 .cursor(CursorStyle::Text)
                 .cursor_color(fg_color.with_alpha(0.5))
-                .padding_horiz(15.0).padding_vert(8.0)
+                .padding_horiz(15.0).padding_vert(8.0).padding_bottom(10.0)
                 .items_center().justify_center()
                 .disabled(|s| {
                     s.background(scale_d500.with_alpha(0.3))
