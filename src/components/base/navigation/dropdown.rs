@@ -28,10 +28,10 @@ impl Theme {
             let item_clone = item.clone();
             let active_item_sig = active_item;
             
-            let is_selected = active_item_sig.get() == item_clone;
+            let is_selected_clone = item_clone.clone();
             crate::components::base::input::select_item::SelectItem::new().item(
                 item.clone().to_string(),
-                is_selected,
+                move || active_item_sig.get() == is_selected_clone,
                 theme.clone(),
                 color
             ).into_any()

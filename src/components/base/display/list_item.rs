@@ -37,68 +37,18 @@ impl ListItem {
         on_click: Option<Box<dyn Fn() + 'static>>,
         theme: Theme,
     ) -> impl View {
-        let icon = data.icon.map(|s| s.to_string());
-        let title = data.title.clone();
-        let subtitle = data.subtitle.clone();
-        let trailing = data.trailing.clone();
-
-        let row = floem::views::Stack::horizontal((
-            icon.map(|ic| {
-                floem::views::Label::new(ic).style(move |s| {
-                    s.font_size(20.0)
-                        .color(theme.foreground_secondary)
-                        .width(32.0)
-                        .flex_row()
-                        .items_center()
-                        .justify_center()
-                })
-            })
-            .map(|v| v.into_any())
-            .unwrap_or_else(|| floem::views::Empty::new().into_any()),
-            floem::views::Stack::vertical((
-                floem::views::Label::new(title).style(move |s| {
-                    s.font_size(14.0)
-                        .font_weight(floem::text::FontWeight::BOLD)
-                        .color(theme.foreground)
-                }),
-                subtitle
-                    .map(|sub| {
-                        floem::views::Label::new(sub).style(move |s| {
-                            s.font_size(12.0)
-                                .color(theme.foreground_secondary)
-                                .margin_top(2.0)
-                        })
-                    })
-                    .map(|v| v.into_any())
-                    .unwrap_or_else(|| floem::views::Empty::new().into_any()),
-            ))
-            .style(|s| s.flex_col().gap(0.0).flex_grow(1.0)),
-            trailing
-                .map(|t| {
-                    floem::views::Label::new(t).style(move |s| {
-                        s.font_size(12.0)
-                            .color(theme.foreground_secondary)
-                            .padding_left(8.0)
-                    })
-                })
-                .map(|v| v.into_any())
-                .unwrap_or_else(|| floem::views::Empty::new().into_any()),
-        ))
-        .style(move |s| {
-            s.flex_row()
-                .items_center()
-                .gap(12.0)
-                .padding_xy(12.0, 10.0)
-                .border_radius(theme.radius_sm)
-                .transition_colors()
-                .hover(|s| s.background(theme.content2))
-                .cursor(floem::style::CursorStyle::Pointer)
-        });
-
+        let mut builder = crate::components::base::input::select_item::SelectItem::new();
+        
+        if let Some(ic) = data.icon { builder = builder.icon(ic); }
+        if let Some(desc) = data.subtitle { builder = builder.description(desc); }
+        if let Some(trail) = data.trailing { builder = builder.trailing(trail); }
+        
+        let view = builder.item(data.title, || false, theme.clone(), crate::theme::ColorRole::Primary);
+        
         if let Some(on_click) = on_click {
-            row.on_event_stop(floem::event::listener::Click, move |_, _| on_click())
+            view.on_event_stop(floem::event::listener::Click, move |_, _| on_click()).into_any()
         } else {
-            row
+            view.into_any()
         }
     }
 

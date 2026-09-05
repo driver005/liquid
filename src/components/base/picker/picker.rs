@@ -45,10 +45,10 @@ impl Picker {
                 let item_clone = item.clone();
                 let item_str = item.to_string();
                 let item_clone_for_style = item.clone();
-                let is_selected = selected.get() == Some(item_clone_for_style.clone());
+                let is_selected_item = item_clone_for_style.clone();
                 crate::components::base::input::select_item::SelectItem::new().item(
                     item_str,
-                    is_selected,
+                    move || selected.get() == Some(is_selected_item.clone()),
                     theme.clone(),
                     color
                 )
