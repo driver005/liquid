@@ -1,0 +1,32 @@
+[package]
+name = "hero-floem"
+version = "0.1.0"
+edition = "2021"
+description = "A HeroUI-inspired component system built on top of Floem"
+license = "MIT"
+
+[dependencies]
+nucleo = "0.2"
+chrono = "0.4"
+floem = { git = "https://github.com/lapce/floem.git" }
+sysinfo = "0.39.6"
+im = "15.1.0"
+crossbeam-channel = "0.5.16"
+
+[lib]
+name = "hero_floem"
+path = "src/lib.rs"
+
+# Debug builds of a GPU-rendered UI (skia/vello) are painfully slow because
+# every dependency (floem, peniko, taffy, parley, ...) runs unoptimized.
+# Keep your own crate fast to recompile, but optimize the deps.
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+lto = true
+codegen-units = 1
+
+[[example]]
+name = "widgetbook"
+path = "examples/widgetbook.rs"

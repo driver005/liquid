@@ -1,0 +1,80 @@
+use floem::prelude::*;
+use crate::theme::{Theme, ColorRole};
+use std::fmt::Display;
+
+pub struct Picker {}
+
+impl Picker {
+    pub fn new() -> Self {
+        Self {}
+    }
+
+    /// An inline picker with a search input and a virtualized list of options.
+    pub fn picker_with_input<T>(
+        &self,
+        options: impl Fn() -> Vec<T> + 'static,
+        selected: RwSignal<Option<T>>,
+        theme: Theme,
+        color: ColorRole,
+    ) -> impl View
+    where
+        T: Display + Clone + PartialEq + 'static,
+    {
+        let search_text = RwSignal::new(String::new());
+        let scale = *theme.scale_for(color);
+
+        let filtered_options = move || {
+            let query = search_text.get().to_lowercase();
+            let all = options();
+            if query.is_empty() {
+                all
+            } else {
+                all.into_iter()
+                    .filter(|item| item.to_string().to_lowercase().contains(&query))
+                    .collect::<Vec<_>>()
+            }
+        };
+
+        let input_view = theme.text_input_uikit(search_text, color)
+            .style(move |s| s.width_full().margin_bottom(8.0));
+
+        let list_view = floem::views::dyn_stack(
+            filtered_options,
+            |item| item.to_string(), // use string representation as key
+            move |item| {
+                let item_clone = item.clone();
+                let item_str = item.to_string();
+                let is_selected = selected.get() == Some(item.clone());
+
+                floem::views::Label::new(item_str)
+                    .style(move |s| {
+                        s.width_full()
+                            .padding(8.0)
+                            .border_radius(theme.radius_md)
+                            .cursor(floem::style::CursorStyle::Pointer)
+                            .background(if is_selected { scale.d500.with_alpha(0.15) } else { floem::peniko::Color::TRANSPARENT })
+                            .color(if is_selected { scale.d400 } else { theme.foreground })
+                            .hover(|s| s.background(theme.content2))
+                    })
+                    .on_event_stop(floem::event::listener::Click, move |_, _| {
+                        selected.set(Some(item_clone.clone()));
+                    })
+                    .into_any()
+            }
+        )
+        .style(|s| s.flex_col().width_full())
+        .scroll()
+        .style(|s| s.width_full().flex_grow(1.0).min_height(100.0).max_height(300.0));
+
+        floem::views::Stack::vertical((input_view, list_view))
+            .style(move |s| {
+                s.flex_col()
+                    .width_full()
+                    .padding(12.0)
+                    .border(1.0)
+                    .border_color(theme.border)
+                    .border_radius(theme.radius_md)
+                    .background(theme.background)
+            })
+    }
+}

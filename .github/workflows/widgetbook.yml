@@ -1,0 +1,213 @@
+name: Widgetbook Visual CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  # ── Job 1: Compile check ──────────────────────────────────────────────────
+  build:
+    name: Build & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            libgl1-mesa-dev libxi-dev libxcursor-dev libxrandr-dev \
+            libx11-dev libxinerama-dev libxkbcommon-dev \
+            libwayland-dev pkg-config \
+            libgles2-mesa-dev libegl-dev
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: cargo check (lib)
+        run: cargo check
+
+      - name: cargo check (examples)
+        run: cargo check --examples
+
+  # ── Job 2: Screenshot every component ────────────────────────────────────
+  screenshots:
+    name: Component Screenshots
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            libgl1-mesa-dev libxi-dev libxcursor-dev libxrandr-dev \
+            libx11-dev libxinerama-dev libxkbcommon-dev \
+            libwayland-dev pkg-config \
+            libgles2-mesa-dev libegl-dev \
+            xvfb scrot xdotool x11-apps \
+            libgl1-mesa-dri mesa-utils
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build widgetbook (release)
+        run: cargo build --example widgetbook --release
+
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1280x800x24 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+          sleep 1
+
+      - name: Launch widgetbook
+        run: |
+          DISPLAY=:99 ./target/release/examples/widgetbook &
+          echo "APP_PID=$!" >> $GITHUB_ENV
+          sleep 3
+
+      - name: Screenshot all components
+        run: |
+          mkdir -p screenshots
+          bash scripts/screenshot_components.sh screenshots
+        env:
+          DISPLAY: ":99"
+
+      - name: Kill widgetbook
+        if: always()
+        run: kill $APP_PID 2>/dev/null || true
+
+      - name: Upload screenshots as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: component-screenshots-${{ github.sha }}
+          path: screenshots/
+          retention-days: 30
+
+  # ── Job 3: Visual regression (compares to baseline on main) ──────────────
+  visual-regression:
+    name: Visual Regression Check
+    runs-on: ubuntu-latest
+    needs: screenshots
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download PR screenshots
+        uses: actions/download-artifact@v4
+        with:
+          name: component-screenshots-${{ github.sha }}
+          path: screenshots-pr/
+
+      # Download baseline from last successful main run
+      - name: Download baseline screenshots
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: widgetbook.yml
+          branch: main
+          name: component-screenshots-*
+          path: screenshots-baseline/
+        continue-on-error: true  # first run won't have a baseline
+
+      - name: Install imagemagick for diff
+        run: sudo apt-get install -y imagemagick
+
+      - name: Run visual diff
+        id: diff
+        run: |
+          mkdir -p screenshots-diff
+          CHANGED=0
+          REPORT="## 🖼 Visual Regression Report\n\n"
+          REPORT+="| Component | Status |\n|---|---|\n"
+
+          for PR_IMG in screenshots-pr/*.png; do
+            NAME=$(basename "$PR_IMG" .png)
+            BASE_IMG="screenshots-baseline/$NAME.png"
+
+            if [ -f "$BASE_IMG" ]; then
+              # Compare images, output diff
+              METRIC=$(compare -metric RMSE "$PR_IMG" "$BASE_IMG" "screenshots-diff/${NAME}_diff.png" 2>&1 | awk '{print $1}')
+              # RMSE > 1.0 = visually changed
+              if (( $(echo "$METRIC > 1.0" | bc -l) )); then
+                REPORT+="| $NAME | ⚠️ Changed (RMSE: $METRIC) |\n"
+                CHANGED=1
+              else
+                REPORT+="| $NAME | ✅ No change |\n"
+              fi
+            else
+              REPORT+="| $NAME | 🆕 New component |\n"
+            fi
+          done
+
+          echo -e "$REPORT" > diff-report.md
+          cat diff-report.md
+
+          # Upload diff images
+          echo "CHANGED=$CHANGED" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Upload diff images
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-diffs-${{ github.sha }}
+          path: screenshots-diff/
+          retention-days: 7
+
+      - name: Comment PR with visual regression report
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+            let body = '## 🖼 Visual Regression Report\n\nNo baseline found — first run.';
+            try {
+              body = fs.readFileSync('diff-report.md', 'utf8');
+            } catch(e) {}
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.includes('🖼 Visual Regression Report'));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
