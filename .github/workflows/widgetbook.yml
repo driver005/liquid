@@ -7,6 +7,8 @@ on:
     branches: [main, master]
 
 env:
+  WINIT_UNIX_BACKEND: x11
+  LIBGL_ALWAYS_SOFTWARE: 1
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
 
@@ -94,6 +96,8 @@ jobs:
           mkdir -p screenshots
           bash scripts/screenshot_components.sh screenshots
         env:
+  WINIT_UNIX_BACKEND: x11
+  LIBGL_ALWAYS_SOFTWARE: 1
           DISPLAY: ":99"
 
       - name: Kill widgetbook

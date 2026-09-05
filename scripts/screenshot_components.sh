@@ -1,3 +1,5 @@
+export WINIT_UNIX_BACKEND=x11
+export LIBGL_ALWAYS_SOFTWARE=1
 #!/usr/bin/env bash
 # screenshot_components.sh
 # Launches the widgetbook headlessly (via Xvfb) and screenshots every component
@@ -77,7 +79,7 @@ COMPONENTS=(
 echo "Launching widgetbook headlessly..."
 ./target/release/examples/widgetbook &
 APP_PID=$!
-trap "kill $APP_PID $XVFB_PID 2>/dev/null || true" EXIT
+trap "kill $APP_PID ${XVFB_PID:-} 2>/dev/null || true" EXIT
 
 # Wait for window to appear
 sleep 2
