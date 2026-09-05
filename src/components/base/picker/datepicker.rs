@@ -83,8 +83,11 @@ impl Theme {
                              .justify_center()
                              .border_radius(theme.radius_md)
                              .cursor(floem::style::CursorStyle::Pointer);
+                            let is_today = date == chrono::Local::now().date_naive();
                             if is_selected {
                                 s.background(scale.d500).color(theme.background).hover(|s| s.background(scale.d600))
+                            } else if is_today {
+                                s.background(theme.content2).color(theme.foreground).hover(|s| s.background(theme.content3))
                             } else {
                                 s.background(floem::peniko::Color::TRANSPARENT).color(theme.foreground).hover(|s| s.background(theme.content2))
                             }

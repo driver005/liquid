@@ -21,9 +21,11 @@ pub fn slider(
             set_value.set(event.pct.0);
             EventPropagation::Continue
         })
-        .style(|s| s.width_full())
+        .style(|s| s.width_full().height(24.0))
         .slider_style(move |s| {
             s.handle_color(scale_d600)
-             // .bar_color(...) might be .accent_bar_color(...) or something, let's just do handle_color for now
+             .bar_color(theme.content3)
+             .bar_radius(4.0)
+             .handle_radius(10.0)
         })
 }
