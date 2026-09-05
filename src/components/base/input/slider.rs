@@ -21,6 +21,7 @@ pub fn slider(
             set_value.set(event.pct.0);
             EventPropagation::Continue
         })
+        .style(|s| s.width_full())
         .slider_style(move |s| {
             s.handle_color(scale_d600)
              // .bar_color(...) might be .accent_bar_color(...) or something, let's just do handle_color for now
