@@ -204,7 +204,7 @@ fn app_view() -> impl View {
         move |dark_mode| {
             let theme = move || if dark_mode { Theme::dark() } else { Theme::light() };
             // ── Sidebar search ──
-                let search_text = theme().text_input_uikit(search, ColorRole::Primary)
+                let search_text = hero_floem::components::base::input::input::TextInput::new().text_input(search, ColorRole::Primary, theme())
                     .style(|s| s.width_full().margin_bottom(8.0));
             
                 // ── Component list ──
@@ -506,9 +506,9 @@ fn render_text_input(theme: Theme) -> impl View {
     let text = RwSignal::new(String::new());
     floem::views::Stack::vertical((
         wb_title("Text Input"),
-        theme.text_input_uikit(text, ColorRole::Primary),
+        hero_floem::components::base::input::input::TextInput::new().text_input(text, ColorRole::Primary, theme.clone()),
         wb_section("With value"),
-        theme.text_input_uikit(RwSignal::new("Hello world".to_string()), ColorRole::Primary),
+        hero_floem::components::base::input::input::TextInput::new().text_input(RwSignal::new("Hello world".to_string()), ColorRole::Primary, theme.clone()),
     )).style(|s| s.flex_col().gap(8.0).max_width(400.0))
 }
 

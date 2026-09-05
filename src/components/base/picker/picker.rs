@@ -35,7 +35,7 @@ impl Picker {
             }
         };
 
-        let input_view = theme.text_input_uikit(search_text, color)
+        let input_view = crate::components::base::input::input::TextInput::new().text_input(search_text, color, theme.clone())
             .style(move |s| s.width_full().margin_bottom(8.0));
 
         let list_view = floem::views::dyn_stack(

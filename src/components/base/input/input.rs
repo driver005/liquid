@@ -2,11 +2,18 @@ use floem::prelude::*;
 use crate::theme::{Theme, ColorRole};
 use floem::style::CursorStyle;
 
-impl Theme {
-    pub fn text_input_uikit(&self, rw_signal: RwSignal<String>, role: ColorRole) -> impl View {
-        let accent = self.scale_for(role);
-        let bg_color = self.background;
-        let fg_color = self.foreground;
+#[derive(Default, Clone)]
+pub struct TextInput {}
+
+impl TextInput {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn text_input(self, rw_signal: RwSignal<String>, role: ColorRole, theme: Theme) -> impl View {
+        let accent = theme.scale_for(role);
+        let bg_color = theme.background;
+        let fg_color = theme.foreground;
         let scale_d500 = accent.d500;
         let scale_d600 = accent.d600;
 
@@ -20,8 +27,8 @@ impl Theme {
                 .font_size(14.0)
                 .cursor(CursorStyle::Text)
                 .cursor_color(fg_color.with_alpha(0.5))
+                .height(36.0)
                 .padding_horiz(15.0)
-                .height(36.0) // Give the input a fixed height so Floem natively centers the text inside
                 .items_center().justify_center()
                 .disabled(|s| {
                     s.background(scale_d500.with_alpha(0.3))
