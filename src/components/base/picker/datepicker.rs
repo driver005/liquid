@@ -74,10 +74,9 @@ impl Theme {
                 
                 for day in 1..=days_in_month {
                     let date = NaiveDate::from_ymd_opt(year, month, day).unwrap();
-                    let is_selected = selected_date.get() == Some(date);
-                    
                     let cell = floem::views::Label::new(day.to_string())
                         .style(move |s| {
+                            let is_selected = selected_date.get() == Some(date);
                             let s = s.width(32.0)
                              .height(32.0)
                              .items_center()
