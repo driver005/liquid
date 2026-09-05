@@ -11,3 +11,4 @@ pub mod kbd;
 pub mod listbox;
 pub mod list_item;
 pub mod table;
+pub mod label;
