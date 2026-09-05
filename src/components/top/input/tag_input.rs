@@ -28,10 +28,10 @@ impl TagInput {
                 let tag_clone = tag.clone();
                 floem::views::Stack::horizontal((
                     floem::views::Label::new(tag.clone())
-                        .style(move |s| s.font_size(13.0).color(theme.foreground).items_center().justify_center()),
+                        .style(move |s| s.font_size(13.0).color(theme.foreground)),
                     floem::views::Label::new("✕")
                         .style(move |s| {
-                            s.font_size(13.0).items_center().justify_center()
+                            s.font_size(13.0)
                                 .color(theme.foreground_secondary)
                                 .cursor(floem::style::CursorStyle::Pointer)
                                 .hover(move |s| s.color(theme.danger.d500))
@@ -42,10 +42,10 @@ impl TagInput {
                 ))
                 .style(move |s| {
                     s.flex_row()
-                        .items_center()
-                        .gap(4.0)
+                        .items_center() // Vertically center the labels in the pill
+                        .gap(6.0)
                         .padding_horiz(8.0)
-                        .padding_vert(4.0)
+                        .height(24.0) // Give pills a fixed height to physically center text inside
                         .border_radius(theme.radius_sm)
                         .background(theme.content3)
                 })
@@ -58,23 +58,22 @@ impl TagInput {
                     .gap(4.0)
                     .flex_wrap(floem::taffy::style::FlexWrap::Wrap)
             }),
-            floem::views::TextInput::new(input_val)
-                .placeholder("Add tag...")
-                .style(move |s| {
-                    s.flex_grow(1.0)
-                        .border(0.0)
-                        .border_color(Color::TRANSPARENT)
-                        .background(Color::TRANSPARENT)
-                        .color(theme.foreground)
-                        .font_size(14.0)
-                        .padding_horiz(8.0)
-                        .padding_vert(6.0)
-                })
-                .on_event_stop(floem::event::listener::KeyDown, move |_, event| {
-                    if event.key == Key::Named(NamedKey::Enter) {
-                        add_tag();
-                    }
-                }),
+            floem::views::Stack::horizontal((
+                floem::views::TextInput::new(input_val)
+                    .placeholder("Add tag...")
+                    .style(move |s| {
+                        s.width_full()
+                            .border(0.0)
+                            .background(Color::TRANSPARENT)
+                            .color(theme.foreground)
+                            .font_size(14.0)
+                    })
+                    .on_event_stop(floem::event::listener::KeyDown, move |_, event| {
+                        if event.key == Key::Named(NamedKey::Enter) {
+                            add_tag();
+                        }
+                    }),
+            )).style(|s| s.flex_grow(1.0).height(24.0).items_center()),
         ))
         .style(move |s| {
             s.flex_row()
@@ -83,7 +82,7 @@ impl TagInput {
                 .flex_wrap(floem::taffy::style::FlexWrap::Wrap)
                 .apply(theme.input_container_style())
                 .padding_horiz(8.0)
-                .padding_vert(6.0)
+                .min_height(36.0)
         })
     }
 }
