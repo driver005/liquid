@@ -29,13 +29,13 @@ impl TagInput {
                 floem::views::Stack::horizontal((
                     floem::views::Label::new(tag.clone())
                         .style(move |s| {
-                            s.font_size(13.0)
+                            s.font_size(13.0).line_height(1.0)
                              .color(theme.foreground)
                              .items_center().justify_center()
                         }),
                     floem::views::Label::new("✕")
                         .style(move |s| {
-                            s.font_size(13.0)
+                            s.font_size(13.0).line_height(1.0)
                                 .color(theme.foreground_secondary)
                                 .cursor(floem::style::CursorStyle::Pointer)
                                 .items_center().justify_center()
@@ -49,7 +49,7 @@ impl TagInput {
                     s.flex_row()
                         .items_center() // Geometrically centers the labels
                         .gap(6.0)
-                        .padding_horiz(8.0)
+                        .padding(6.0)
                         .height(24.0) // Container height
                         .border_radius(theme.radius_sm)
                         .background(theme.content3)
@@ -70,8 +70,8 @@ impl TagInput {
                         .border(0.0)
                         .background(Color::TRANSPARENT)
                         .color(theme.foreground)
-                        .font_size(14.0)
-                        .padding_horiz(8.0)
+                        .font_size(14.0).line_height(1.0)
+                        .padding(6.0)
                         .items_center().justify_center()
                 })
                 .on_event_stop(floem::event::listener::KeyDown, move |_, event| {
@@ -86,7 +86,7 @@ impl TagInput {
                 .gap(4.0)
                 .flex_wrap(floem::taffy::style::FlexWrap::Wrap)
                 .apply(theme.input_container_style())
-                .padding_horiz(8.0)
+                .padding(6.0)
                 .min_height(36.0)
         })
     }
