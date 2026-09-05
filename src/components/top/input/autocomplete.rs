@@ -42,16 +42,13 @@ impl Autocomplete {
             |opt: &String| opt.clone(),
             move |opt| {
                 let opt2 = opt.clone();
-                floem::views::Label::new(opt)
-                    .style(move |s| {
-                        s.font_size(14.0)
-                            .color(theme.foreground)
-                            .padding_xy(12.0, 8.0)
-                            .width_full()
-                            .cursor(floem::style::CursorStyle::Pointer)
-                            .transition_colors()
-                            .hover(|s| s.background(theme.content2))
-                    })
+                crate::components::base::input::select_item::SelectItem::new()
+                    .item(
+                        opt,
+                        || false,
+                        theme.clone(),
+                        crate::theme::ColorRole::Primary
+                    )
                     .on_event_stop(floem::event::listener::Click, move |_, _| {
                         value.set(opt2.clone());
                         open.set(false);

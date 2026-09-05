@@ -53,34 +53,26 @@ impl CommandPalette {
             .enumerate()
             .map(|(i, cmd)| {
                 let label = cmd.label.clone();
-                let shortcut = cmd.shortcut.clone();
+                // let shortcut = cmd.shortcut.clone();
                 let on_select = cmd.on_select;
                 let open_sig = open;
 
-                floem::views::Stack::horizontal((
-                    floem::views::Label::new(label)
-                        .style(move |s| s.apply(theme.command_palette_item_label_style())),
-                    shortcut
-                        .map(|sc| {
-                            floem::views::Label::new(sc)
-                                .style(move |s| s.apply(theme.command_palette_shortcut_style()))
-                        })
-                        .map(|v| v.into_any())
-                        .unwrap_or_else(|| floem::views::Empty::new().into_any()),
-                ))
-                .style({
-                    move |s| {
-                        let is_sel = selected.get() == i;
-                        s.apply(theme.command_palette_item_container_style(is_sel))
-                            .hover({
-                                move |s| s.apply(theme.command_palette_item_container_hover_style())
-                            })
-                    }
-                })
+                let mut builder = crate::components::base::input::select_item::SelectItem::new();
+                if let Some(sc) = cmd.shortcut {
+                    builder = builder.trailing(sc);
+                }
+                
+                builder.item(
+                    label,
+                    move || selected.get() == i,
+                    theme.clone(),
+                    crate::theme::ColorRole::Primary
+                )
                 .on_event_stop(floem::event::listener::Click, move |_, _| {
                     on_select();
                     open_sig.set(false);
                 })
+                .into_any()
             })
             .collect();
 
