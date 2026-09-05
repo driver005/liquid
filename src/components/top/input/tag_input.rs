@@ -49,7 +49,7 @@ impl TagInput {
                     s.flex_row()
                         .items_center() // Geometrically centers the labels
                         .gap(6.0)
-                        .padding(6.0).padding_bottom(8.0)
+                        .padding(6.0)
                         .height(24.0) // Container height
                         .border_radius(theme.radius_sm)
                         .background(theme.content3)
@@ -71,7 +71,7 @@ impl TagInput {
                         .background(Color::TRANSPARENT)
                         .color(theme.foreground)
                         .font_size(14.0)
-                        .padding(6.0).padding_bottom(8.0)
+                        .padding(6.0)
                         .items_center().justify_center()
                 })
                 .on_event_stop(floem::event::listener::KeyDown, move |_, event| {
@@ -86,7 +86,7 @@ impl TagInput {
                 .gap(4.0)
                 .flex_wrap(floem::taffy::style::FlexWrap::Wrap)
                 .apply(theme.input_container_style())
-                .padding(6.0).padding_bottom(8.0)
+                .padding(6.0)
                 .min_height(36.0)
         })
     }
